@@ -1,4 +1,4 @@
-body {
+/*body {
     background: #eee;
     text-align: center;
     padding: 0 25px;
@@ -82,6 +82,20 @@ form input[type=text] {
 .spinner img {
     padding: 10px;
 }
+*/
+
+.row {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+}
+.row > [class*='col-'] {
+  display: flex;
+  flex-direction: column;
+}
+
 
 .friend {
     color: #fff;
