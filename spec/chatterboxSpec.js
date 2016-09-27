@@ -8,12 +8,6 @@ describe('chatterbox', function() {
       expect(app.init).to.be.ok;
     });
 
-    xit('should load an intial set of messages from the server', function(done) {
-      app.init();
-      expect($('#chats').children().length).to.be.above(0);
-      done();
-    });
-
   });
 
   describe('app behavior', function() {

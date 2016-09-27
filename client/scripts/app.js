@@ -1,11 +1,21 @@
 // YOUR CODE HERE:
 
+// friends
+  // usernames are clickable > save 'friends'
+  // all messages from friends are in bold
+// delete empty rooms
+// setInterval for fetch
+// restyling
+
+
 
 var app = {
   server: 'https://api.parse.com/1/classes/messages'
 };
 
 app.init = function() {
+  app.friends = [];
+
   $('#send').submit(app.handleSubmit);
   $('#roomSelect').on('change', app.handleRoomChange);
 
@@ -35,7 +45,7 @@ app.fetch = function() {
   $.ajax({
     url: this.server,
     data: {
-      limit: 25
+      limit: 100
     },
     success: (data) => {
       app.clearMessages();
@@ -67,15 +77,21 @@ app.clearMessages = function() {
 };
 
 app.renderMessage = function(message) {
+  message.username = message.username || 'anonymous';
   const messageText = $('<div>').text(message.text).html();
   const userName = $('<div>').text(message.username).html();
 
 
   const $message = $('<div></div>').addClass('message');
-  const $username = $('<span></span>').addClass('username').text(userName);
+  const $username = $('<a href="#"></a>').data('username', userName).addClass('username').text(userName);
+  if (app.friends.indexOf(userName) > -1) {
+    $message.addClass('friend');
+  }
+
   const $text = $('<span></span>').addClass('text').text(messageText);
   $message.append($username).append($text);
   $('#chats').append($message);
+  $('.username').unbind().on('click', app.handleUsernameClick);
 };
 
 app.renderRoom = function(roomName) {
@@ -84,8 +100,20 @@ app.renderRoom = function(roomName) {
   $('#roomSelect').append($newRoom);
 };
 
-app.handleUsernameClick = function(username) {
-  // add friend?
+app.handleUsernameClick = function(event) {
+  event.stopPropagation();
+  let username = $(event.target).data('username');
+  if (app.getUsername() === username || username === 'anonymous') {
+    return;
+  }
+  // if not in friends array
+  const userIndex = app.friends.indexOf(username);
+  if (userIndex === -1) {
+    app.friends.push(username);
+  } else {
+    app.friends.splice(userIndex, 1);
+  }
+  app.fetch();
 };
 
 app.handleRoomChange = function(event) {
@@ -106,9 +134,6 @@ app.handleSubmit = function(event) {
   $('#message').val('');
   const messageUsername = app.getUsername();
   const messageRoomname = app.currentRoom;
-
-  // message has 'text', 'username', and 'roomname'
-
 
   // use send to submit to server
   app.send({

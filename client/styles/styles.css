@@ -93,3 +93,7 @@ form input[type=text] {
     font-weight: 800;
 }
 
+a.username {
+    text-decoration: none;
+    color: black;
+}
