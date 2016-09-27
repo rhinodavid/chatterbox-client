@@ -6,7 +6,8 @@ var app = {
 };
 
 app.init = function() {
-  $('#send .submit').submit(app.handleSubmit);
+  $('#send').off('submit').submit(app.handleSubmit);
+  app.room = 'lobby';
   app.fetch();
 };
 
@@ -16,9 +17,7 @@ app.send = function(message) {
     type: 'POST',
     data: JSON.stringify(message), 
     success: (data, textStatus, jqXHR) => {
-      console.log(data);
-      console.log(textStatus);
-      console.log(jqXHR);
+      app.fetch();
     }
   });
 };
@@ -27,7 +26,7 @@ app.fetch = function() {
   $.ajax({
     url: this.server,
     data: {
-      limit: 100
+      limit: 25
     },
     success: (data) => {
       app.clearMessages();
@@ -50,8 +49,8 @@ app.clearMessages = function() {
 
 app.renderMessage = function(message) {
   let $message = $('<div></div>').addClass('message');
-  let $username = $('<span></span>').addClass('message-username').text(escapeHtml(message.username));
-  let $text = $('<span></span>').addClass('message-text').text(escapeHtml(message.text));
+  let $username = $('<span></span>').addClass('message-username').text(message.username).html();
+  let $text = $('<span></span>').addClass('message-text').text(message.text).html();
   $message.append($username).append($text);
   $('#chats').append($message);
 };
@@ -67,27 +66,26 @@ app.handleUsernameClick = function(username) {
 
 app.handleSubmit = function(event) {
   event.preventDefault();
-  console.log('handle submit');
-  console.log(event);
-};
+  // grab message from form
+  let messageText = $('#message').val();
+  $('#message').val('');
+  let messageUsername = app.getUsername();
+  let messageRoomname = app.room;
+
+  // message has 'text', 'username', and 'roomname'
 
 
-var escapeHtml = function(string) {
-  var entityMap = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    '\'': '&#39;',
-    '/': '&#x2F;'
-  };
-
-  return String(string).replace(/[&<>"'\/]/g, function (s) {
-    return entityMap[s];
+  // use send to submit to server
+  app.send({
+    text: messageText,
+    username: messageUsername,
+    roomname: messageRoomname
   });
 };
 
-
+app.getUsername = function() {
+  return window.location.search.replace(/(&|\?)username=/, '');
+};
 
 $(function() {
   app.init();
