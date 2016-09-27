@@ -8,6 +8,12 @@ describe('chatterbox', function() {
       expect(app.init).to.be.ok;
     });
 
+    xit('should load an intial set of messages from the server', function(done) {
+      app.init();
+      expect($('#chats').children().length).to.be.above(0);
+      done();
+    });
+
   });
 
   describe('app behavior', function() {
@@ -89,7 +95,7 @@ describe('chatterbox', function() {
       it('should be able to add rooms to the DOM', function() {
         app.renderRoom('superLobby');
 
-        expect($('#roomSelect').children().length).to.equal(1);
+        expect($('#roomSelect').children().length).to.be.above(0);
       });
 
     });
@@ -116,7 +122,6 @@ describe('chatterbox', function() {
         sinon.spy(app, 'handleSubmit');
 
         $('#message').val('Why so many Mel Brooks quotes?');
-
         app.init();
 
         $('#send .submit').trigger('submit');
