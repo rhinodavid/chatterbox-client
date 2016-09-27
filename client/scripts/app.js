@@ -45,7 +45,8 @@ app.fetch = function() {
   $.ajax({
     url: this.server,
     data: {
-      limit: 100
+      limit: 100,
+      order: '-createdAt'
     },
     success: (data) => {
       app.clearMessages();
