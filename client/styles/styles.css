@@ -98,8 +98,7 @@ form input[type=text] {
 
 
 .friend {
-    color: #fff;
-    background-color: #0090da;
+    border-bottom: 4px solid #4fc1e9;
 }
 
 .message .username {
@@ -110,4 +109,18 @@ form input[type=text] {
 a.username {
     text-decoration: none;
     color: black;
+}
+
+.timeline dl dd.pos-right .events:before {
+    left: -12px;
+    border-color: transparent #eee transparent transparent;
+}
+
+.timeline dl dd.pos-left .events:before {
+    right: -12px;
+    border-color: transparent transparent transparent #eee;
+}
+
+.timeline dl dd .events {
+    background-color: #eee;
 }

@@ -28,7 +28,9 @@ app.init = function() {
   app.rooms = [].concat(app.currentRoom);
   app.renderRoom(app.currentRoom);
   document.querySelector('#roomSelect [value="lobby"]').selected = true;
+  app.messagesCreated = 0;
   app.fetch();
+  // setInterval(()=>{ app.fetch(); }, 4000);
 };
 
 app.send = function(message) {
@@ -59,7 +61,8 @@ app.fetch = function() {
             {
               text: message.text,
               username: message.username,
-              roomname: message.roomname
+              roomname: message.roomname,
+              time: message.createdAt
             }
           );
         } else {
@@ -81,18 +84,28 @@ app.clearMessages = function() {
 app.renderMessage = function(message) {
   message.username = message.username || 'anonymous';
 
-  const $message = $('<div></div>').addClass('message');
+  const posClass = app.messagesCreated++ % 2 === 0 ? 'pos-right' : 'pos-left';
+  const $message = $('<dd />').addClass('message').addClass(posClass).addClass('clearfix');
+  const $circ = $('<div />').addClass('circ');
+  const time = new Date(message.time);
+  const minutes = time.getMinutes() > 10 ? time.getMinutes() : '0' + time.getMinutes();
+  const $time = $('<div />').addClass('time').text(time.getHours() + ':' + minutes);
+  const $messageWrapper = $('<div />').addClass('events');
+  const $messageContent = $('<div class="events-body"/>');
+
   const $username = $('<a href="#"></a>').addClass('username').text(message.username);
   const userName = $username.text();
 
   $username.data('username', userName);
 
   if (app.friends[userName]) {
-    $message.addClass('friend');
+    $messageWrapper.addClass('friend');
   }
 
-  const $text = $('<span></span>').addClass('text').text(message.text);
-  $message.append($username).append($text);
+  const $text = $('<p></p>').addClass('text').text(message.text);
+  $messageContent.append($username).append($text);
+  $messageContent.appendTo($messageWrapper);
+  $message.append($circ).append($time).append($messageWrapper);
   $('#chats').append($message);
 };
 
