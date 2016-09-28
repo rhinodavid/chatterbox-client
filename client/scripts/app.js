@@ -53,7 +53,7 @@ app.fetch = function() {
       app.clearMessages();
       data.results.forEach((message) => {
         message.roomname = message.roomname || 'lobby';
-        if (message.roomname === app.currentRoom) {
+        if (message.roomname.toLowerCase() === app.currentRoom.toLowerCase()) {
           // render message
           app.renderMessage(
             {
@@ -64,9 +64,9 @@ app.fetch = function() {
           );
         } else {
           // add the room to our list if it isn't there already
-          if (app.rooms.indexOf(message.roomname) === -1) {
+          if (app.rooms.indexOf(message.roomname.toLowerCase()) === -1) {
             app.renderRoom(message.roomname);
-            app.rooms.push(message.roomname);
+            app.rooms.push(message.roomname.toLowerCase());
           } 
         }
       });
@@ -97,7 +97,7 @@ app.renderMessage = function(message) {
 };
 
 app.renderRoom = function(roomName) {
-  const $newRoom = $('<option />').val(roomName).text(roomName);
+  const $newRoom = $('<option />').val(roomName.toLowerCase()).text(roomName);
   $('#roomSelect').append($newRoom);
 };
 
@@ -141,21 +141,20 @@ app.handleSubmit = function(event) {
 
 app.createNewRoom = function() {
   const name = prompt('Enter new room name.') || 'lobby';
-  // see if it's in out list at all
-  if (app.rooms.indexOf(name) > -1) {
+  const lowercaseName = name.toLowerCase();  
+  if (app.rooms.indexOf(lowercaseName) > -1) {
     // if it is, just change the room to the input room
     app.currentRoom = name;
   } else {
     // if it is not, then add the room, change current room, and change the
     // displayed room
-    app.rooms.push(name);
+    app.rooms.push(lowercaseName);
     app.currentRoom = name;
-    // add it to screen
     app.renderRoom(name);
   }
   // fetch and update the displayed room
   app.fetch();
-  document.querySelector('#roomSelect [value="' + name + '"]').selected = true;
+  document.querySelector('#roomSelect [value="' + lowercaseName + '"]').selected = true;
 };
 
 app.getUsername = function() {
