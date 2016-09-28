@@ -14,10 +14,11 @@ var app = {
 };
 
 app.init = function() {
-  app.friends = [];
+  app.friends = {};
 
   $('#send').submit(app.handleSubmit);
   $('#roomSelect').on('change', app.handleRoomChange);
+  $('#chats').on('click', '.username', app.handleUsernameClick);
 
   // add New Room option to rooms
   let $newRoom = $('<option value="add_new_room"></option>').text('Add new room...');
@@ -79,25 +80,24 @@ app.clearMessages = function() {
 
 app.renderMessage = function(message) {
   message.username = message.username || 'anonymous';
-  const messageText = $('<div>').text(message.text).html();
-  const userName = $('<div>').text(message.username).html();
-
 
   const $message = $('<div></div>').addClass('message');
-  const $username = $('<a href="#"></a>').data('username', userName).addClass('username').text(userName);
-  if (app.friends.indexOf(userName) > -1) {
+  const $username = $('<a href="#"></a>').addClass('username').text(message.username);
+  const userName = $username.text();
+
+  $username.data('username', userName);
+
+  if (app.friends[userName]) {
     $message.addClass('friend');
   }
 
-  const $text = $('<span></span>').addClass('text').text(messageText);
+  const $text = $('<span></span>').addClass('text').text(message.text);
   $message.append($username).append($text);
   $('#chats').append($message);
-  $('.username').unbind().on('click', app.handleUsernameClick);
 };
 
 app.renderRoom = function(roomName) {
-  const roomNameEscaped = $('<div>').text(roomName).html();
-  const $newRoom = $('<option value="' + roomNameEscaped + '"></option>').text(roomNameEscaped);
+  const $newRoom = $('<option />').val(roomName).text(roomName);
   $('#roomSelect').append($newRoom);
 };
 
@@ -107,13 +107,8 @@ app.handleUsernameClick = function(event) {
   if (app.getUsername() === username || username === 'anonymous') {
     return;
   }
-  // if not in friends array
-  const userIndex = app.friends.indexOf(username);
-  if (userIndex === -1) {
-    app.friends.push(username);
-  } else {
-    app.friends.splice(userIndex, 1);
-  }
+ 
+  app.friends[username] = !app.friends[username];
   app.fetch();
 };
 
