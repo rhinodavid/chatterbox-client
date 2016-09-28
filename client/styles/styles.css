@@ -121,6 +121,13 @@ a.username {
     border-color: transparent transparent transparent #eee;
 }
 
+
+@media screen and (max-width: 767px)
+.timeline dl dd.pos-left .events:before {
+    left: -12px;
+    border-color: transparent #eee transparent transparent;
+}
+
 .timeline dl dd .events {
     background-color: #eee;
 }
